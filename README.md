@@ -1,3 +1,3 @@
-# Universal Apps: Lessons from the Trenches
+# React Lifecycle
 
-Slides and demo for a talk on universal apps.
+Slides and demo for a deep dive on the React Lifecycle.
