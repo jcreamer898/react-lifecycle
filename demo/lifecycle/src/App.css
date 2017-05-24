@@ -1,0 +1,26 @@
+html, body { height: 100%; margin: 0; padding: 0; }
+
+.App {
+  display: flex;
+  position: relative;
+  height: 100%;
+  background: #eee;
+  box-sizing: border-box;
+}
+
+.CodeMirror {
+  height: 100%;
+}
+
+.CodeMirror-fullscreen {
+  position: fixed !important;
+  top: 0; left: 0; bottom: 0;
+  width: 50%;
+  height: auto;
+  z-index: 9;
+}
+
+.Render {
+  position: relative;
+  left: 50%;
+}

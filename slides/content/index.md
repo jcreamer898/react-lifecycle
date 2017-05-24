@@ -26,7 +26,7 @@ class: center, middle
 * Love JavaScript, tweet at [@jcreamer898](http://twitter.com/jcreamer898), blog at [jonathancreamer.com](http://jonathancreamer.com)
 * [Microsoft MVP](https://mvp.microsoft.com/en-us/MyProfile/Preview?previewAs=Public)
 
-????
+???
 
 class: center, middle
 
@@ -124,7 +124,7 @@ class: center, middle
 ### constructor
 
 ```js
-constructor(super) {
+constructor(prop) {
   super(props);
   this.state = {}:
 }
@@ -207,6 +207,10 @@ class: center, middle
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
   componentDidMount() {
     this.editor = ace.edit(this.$text);
   }
@@ -224,6 +228,78 @@ export default class Editor extends React.Component {
 * DOM is ready here
 * Stand up plugins
 * `ref` is now a function
+---
+
+### componentDidMount
+
+```js
+import ace from "aceeditor";
+
+export default class Editor extends React.Component {
+* constructor() {
+    super();
+    this.state = {};
+  }
+  componentDidMount() {
+    this.editor = ace.edit(this.$text);
+  }
+  render() {
+    return (
+      <div
+        ref={(node) => this.$text = node}
+      />
+    )
+  }
+}
+```
+---
+
+### componentDidMount
+
+```js
+import ace from "aceeditor";
+
+export default class Editor extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
+  componentDidMount() {
+    this.editor = ace.edit(this.$text);
+  }
+* render() {
+    return (
+      <div
+        ref={(node) => this.$text = node}
+      />
+    )
+  }
+}
+```
+---
+
+### componentDidMount
+
+```js
+import ace from "aceeditor";
+
+export default class Editor extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
+* componentDidMount() {
+    this.editor = ace.edit(this.$text);
+  }
+  render() {
+    return (
+      <div
+        ref={(node) => this.$text = node}
+      />
+    )
+  }
+}
+```
 
 ---
 class: center, middle
@@ -239,9 +315,174 @@ componentWillUnmount() {
   this.editor.destroy();
 }
 ```
-
-* 
+* Remove any event handlers or plugins
 * No leaks
+
+---
+
+### componentWillUnmount
+
+```js
+class Chat extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { messages: [] };
+  }
+  componentDidMount() {
+    this.subscription = postal.subscribe({
+      topic: "message.added",
+      callback: (message) => {
+        this.setState({
+          messages: [...this.state.messages, message]
+        })
+      }
+    });
+  }
+  componentWillUmount() {
+    this.subscription.unsubscribe();
+  }
+  render() {
+    return (
+      <Messages messages={this.state.message} />
+    )
+  }
+}
+```
+
+---
+
+### componentWillUnmount
+
+```js
+class Chat extends Component {
+* constructor(props) {
+    super(props);
+    this.state = { messages: [] };
+  }
+  componentDidMount() {
+    this.subscription = postal.subscribe({
+      topic: "message.added",
+      callback: (message) => {
+        this.setState({
+          messages: [...this.state.messages, message]
+        })
+      }
+    });
+  }
+  componentWillUmount() {
+    this.subscription.unsubscribe();
+  }
+  render() {
+    return (
+      <Messages messages={this.state.message} />
+    )
+  }
+}
+```
+
+---
+
+### componentWillUnmount
+
+```js
+class Chat extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { messages: [] };
+  }
+  componentDidMount() {
+    this.subscription = postal.subscribe({
+      topic: "message.added",
+      callback: (message) => {
+        this.setState({
+          messages: [...this.state.messages, message]
+        })
+      }
+    });
+  }
+  componentWillUmount() {
+    this.subscription.unsubscribe();
+  }
+* render() {
+    return (
+      <Messages messages={this.state.message} />
+    )
+  }
+}
+```
+
+---
+
+### componentWillUnmount
+
+```js
+class Chat extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { messages: [] };
+  }
+* componentDidMount() {
+    this.subscription = postal.subscribe({
+      topic: "message.added",
+      callback: (message) => {
+        this.setState({
+          messages: [...this.state.messages, message]
+        })
+      }
+    });
+  }
+  componentWillUmount() {
+    this.subscription.unsubscribe();
+  }
+  render() {
+    return (
+      <Messages messages={this.state.message} />
+    )
+  }
+}
+```
+
+---
+
+### componentWillUnmount
+
+```js
+class Chat extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { messages: [] };
+  }
+  componentDidMount() {
+    this.subscription = postal.subscribe({
+      topic: "message.added",
+      callback: (message) => {
+        this.setState({
+          messages: [...this.state.messages, message]
+        })
+      }
+    });
+  }
+* componentWillUmount() {
+    this.subscription.unsubscribe();
+  }
+  render() {
+    return (
+      <Messages messages={this.state.message} />
+    )
+  }
+}
+```
+
+---
+class: center, middle
+
+# IRL
+
+---
+class: center, middle
+### IRL
+
+<img src="images/listtopoi.gif" style="width: 100%;" />
 
 ---
 
@@ -261,6 +502,9 @@ export default class PoiDetail {
 }
 ```
 
+* `List` is mounted on load
+* Then, `Poi` gets mounted on route change
+* Use `react-router` params to get ID
 * Use `componentDidMount` to fire actions
 
 ---
@@ -290,6 +534,94 @@ class: center, middle
 # componentWillReceiveProps
 
 ---
+
+### I before E...
+
+<img src="images/willrecieve.png" style="width: 100%" />
+
+---
+
+### componentWillReceiveProps
+
+```js
+class Search extends Component {
+  render() {
+    return (
+      <input value={this.state.value} />
+    );
+  }
+}
+```
+```js
+class Page extends Component {
+  render() {
+    return (
+      <Search
+        value={value}
+      />
+    )
+  }
+}
+```
+
+* Parent passes some kind of prop
+* Sometimes those props can change
+
+---
+
+### componentWillReceiveProps
+
+```js
+componentWillReceiveProps(nextProps) {
+  if (this.state.value, !== nextProps.value,) {
+    this.setState({
+      value,
+    });
+  }
+}
+```
+
+---
+### componentWillReceiveProps
+
+* BEFORE render
+* `props` have changed
+* Be careful, can cause loops
+* Update state if props don't match
+* Very useful in React Router SPA
+
+---
+
+### React Router
+
+```js
+class SightComponent extends Component {
+  render() {
+    return (
+      <div>
+        <Link to="/a/poi-sig/381139/362228">Country Music Hall of Fame</Link>
+      </div>
+    )
+  }
+}
+```
+
+* http://www.lonelyplanet.com/usa/nashville/attractions/country-music-hall-of-fame-museum/a/poi-sig/381139/362228
+* If a component is mounted already
+
+---
+
+# componentDidUpdate
+
+```js
+componentDidUpdate(prevProps) {
+  if (prevProps.params.id !== this.params.id) {
+    window.scrollTop = 0;
+  }
+}
+```
+
+---
 class: center, middle
 
 # shouldComponentUpdate
@@ -300,7 +632,7 @@ class: center, middle
 
 # Testing
 
-
+---
 
 ---
 

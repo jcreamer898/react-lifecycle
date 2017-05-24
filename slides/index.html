@@ -15,7 +15,11 @@
         font-family: 'Yanone Kaffeesatz';
         font-weight: normal;
       }
-      .remark-code, .remark-inline-code { font-family: 'Inconsolata'; }
+      .remark-code, .remark-inline-code {
+        font-family: 'consolas';
+        font-size: 16px;
+        line-height: 20px;
+      }
     </style>
   </head>
   <body>
@@ -25,8 +29,9 @@
     <script type="text/javascript">
       var slideshow = remark.create({
         sourceUrl: "content/index.md",
-        highlightLanguage: "javascript",
-        highlightStyle: "monokai"
+        highlightLanguage: "jsx",
+        highlightStyle: "googlecode",
+        highlightLines: true,
       });
     </script>
   </body>
