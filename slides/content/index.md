@@ -619,6 +619,24 @@ class SightComponent extends Component {
 
 ---
 
+### React Router
+
+```js
+componentWillReceiveProps(nextProps) {
+  const { id: currentId } = this.props.params;
+  const { id: nextId } = this.props.params;
+
+  if (currentId !== nextId) {
+    this.props.fetchPoi(nextId);
+  }
+}
+```
+
+* Compare last id to current id
+* Name variables for readability
+
+---
+
 # componentDidUpdate
 
 ```js
@@ -641,6 +659,66 @@ class: center, middle
 # Testing
 
 ---
+
+### Testing
+
+```
+npm i install -S jest enzyme
+```
+
+* Jest for suite
+* Enzyme for sweet
+* Super important to test
+* Always test logic
+* Use [mount](https://github.com/airbnb/enzyme/blob/master/docs/api/mount.md) to run `JSDom`
+
+---
+
+### Testing willMount
+```js
+describe("Detail Page", () => {
+  it("should fetch a page if there isn't one loaded", () => {
+    const wrapper = mount(
+      const fetch = jest.fn();
+      <Details
+        poi={null}
+        fetchPoi={fetch}
+      />
+    );
+
+    expect(fetch).toHaveBeenCalled();
+  });
+});
+```
+
+* Create a mock fetch
+* Assert with `toHaveBeenCalled` 
+---
+
+### Testing willReceiveProps
+
+```js
+describe("Detail Page", () => {
+  it("should fetch a new page", () => {
+    const wrapper = mount(
+      const fetch = jest.fn();
+      <Details
+        params={{
+          id: 1
+        }}
+        fetchPoi={fetch}
+      />
+    );
+    wrapper.setProps({
+      params: { id: 2 }
+    });
+
+    expect(fetch).toHaveBeenCalled();
+  });
+});
+```
+
+* Use `setProps`
 
 ---
 
