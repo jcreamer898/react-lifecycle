@@ -543,12 +543,20 @@ class: center, middle
 
 ### componentWillReceiveProps
 
+* Called when the props passed in change
+* NOT called on initial render
+* Does NOT trigger a render
+
+---
+
 ```js
-class Search extends Component {
-  render() {
-    return (
-      <input value={this.state.value} />
-    );
+class Page extends Component {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.activeLink === this.props.link) {
+      this.setState({
+        active: true
+      });
+    }
   }
 }
 ```
@@ -573,7 +581,7 @@ class Page extends Component {
 
 ```js
 componentWillReceiveProps(nextProps) {
-  if (this.state.value, !== nextProps.value,) {
+  if (this.state.value !== nextProps.value) {
     this.setState({
       value,
     });
