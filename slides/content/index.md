@@ -26,10 +26,6 @@ class: center, middle
 * Love JavaScript, tweet at [@jcreamer898](http://twitter.com/jcreamer898), blog at [jonathancreamer.com](http://jonathancreamer.com)
 * [Microsoft MVP](https://mvp.microsoft.com/en-us/MyProfile/Preview?previewAs=Public)
 
-???
-
-class: center, middle
-
 ---
 
 ### Agenda
@@ -545,58 +541,62 @@ class: center, middle
 
 * Called when the props passed in change
 * NOT called on initial render
-* Does NOT trigger a render
-
----
-
-```js
-class Page extends Component {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.activeLink === this.props.link) {
-      this.setState({
-        active: true
-      });
-    }
-  }
-}
-```
-```js
-class Page extends Component {
-  render() {
-    return (
-      <Search
-        value={value}
-      />
-    )
-  }
-}
-```
-
-* Parent passes some kind of prop
-* Sometimes those props can change
-
----
-
-### componentWillReceiveProps
-
-```js
-componentWillReceiveProps(nextProps) {
-  if (this.state.value !== nextProps.value) {
-    this.setState({
-      value,
-    });
-  }
-}
-```
-
----
-### componentWillReceiveProps
-
-* BEFORE render
 * `props` have changed
 * Be careful, can cause loops
 * Update state if props don't match
 * Very useful in React Router SPA
+
+---
+
+### componentWillReceiveProps
+
+```js
+class AvatarUploader extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { src: props.src };
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.src !== this.props.src) {
+      this.setState({
+        src: nextProps.src,
+      });
+    }
+  }
+  uploadFiles() {
+    this.props.upload()
+  }
+  render() { /* ... */ }
+}
+```
+
+* Useful when `state` is set with a `prop`.
+
+---
+
+### componentWillReceiveProps
+
+```js
+class Editor extends PureComponent {
+  upload(files) {
+    this.props.dispatch(uploadAction(files));
+  }
+  render() {
+    const { image } = this.props;
+    return (
+      <AvatarUploader
+        src={image}
+        upload={this.upload}
+      />
+    )
+  }
+}
+const mapStateToProps = (state) => ({ image: state.image })
+export default connect(mapStateToProps)(Editor);
+```
+
+* `image` gets passed in to `AvatarUploader`
+* Causes `componentWillReceiveProps` to fire
 
 ---
 
@@ -636,21 +636,473 @@ componentWillReceiveProps(nextProps) {
 * Name variables for readability
 
 ---
+class: center, middle
 
 # componentDidUpdate
+
+---
+
+### componentDidUpdate
 
 ```js
 componentDidUpdate(prevProps) {
   if (prevProps.params.id !== this.params.id) {
     window.scrollTop = 0;
+    this.props.pageView();
   }
+}
+```
+
+* Gives you previous props `prevProps` to compare
+* Called AFTER render
+* Update the DOM
+
+---
+class: center, middle
+
+# shouldComponentUpdate
+
+---
+
+### shouldComponentUpdate
+
+```js
+shouldComponentUpdate(nextProps, nextState) {
+  return shallowCompare(nextProps, nextState);
+}
+```
+```js
+export class Counter extends React.PureComponent {
+  // ...
+}
+```
+
+* Tell the component whether or not to render
+* Can [increase performance](https://facebook.github.io/react/docs/optimizing-performance.html)
+* Used to call `shallowCompare`
+* MOST of the time, use `React.PureComponent`
+
+---
+
+### shouldComponentUpdate
+
+```js
+shouldComponentUpdate(nextProps) {
+  return nextProps.poi.id !== this.props.poi.id;
+}
+```
+
+* If you need fine grain control
+* Parent could change a prop
+
+---
+class: center, middle
+
+# Full Example
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+---
+
+```js
+export default class PoiDetail {
+* constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+* componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+* render() { /* ... */ }
+}
+```
+
+---
+
+### React Router
+
+```js
+render() {
+  return (
+    <Link to={poiLink(1234, 362228)} />
+  )
+}
+```
+* Click a link
+* Will pass props down to `PoiDetail`
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+* componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+* shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+* render() { /* ... */ }
 }
 ```
 
 ---
 class: center, middle
 
-# shouldComponentUpdate
+### Fetching...
+
+![](images/waiting.gif)
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+* componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+* shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+* render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+* componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+* componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
 
 ---
 
@@ -719,6 +1171,13 @@ describe("Detail Page", () => {
 ```
 
 * Use `setProps`
+
+---
+
+### Additional Resources
+
+* https://gist.github.com/jcreamer898/aeaf4b7a08b9871c3a48ad4bb7ccb35c
+* https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1
 
 ---
 
