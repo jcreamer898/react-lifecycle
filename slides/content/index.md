@@ -1,17 +1,12 @@
-name: intro
-class: center, middle
-
 # Deep Dive on the React Lifecycle
-#### http://bit.ly/universal-app-lessons
 
 ---
-class: center, middle
 
 # whoami
 
 ### Jonathan Creamer
 
-<img src="images/family.jpg" style="width: 80%;" />
+![](images/family.jpg)
 
 ---
 
@@ -21,7 +16,7 @@ class: center, middle
 * Past JavaScript Engineer appendTo
 * Nashville, TN
 
-<img src="images/lonelyplanet_bw.png" style="width: 10em" />
+![inline](images/lonelyplanet_bw.png)
 
 * Love JavaScript, tweet at [@jcreamer898](http://twitter.com/jcreamer898), blog at [jonathancreamer.com](http://jonathancreamer.com)
 * [Microsoft MVP](https://mvp.microsoft.com/en-us/MyProfile/Preview?previewAs=Public)
@@ -51,7 +46,7 @@ A function is pure if...
 
 ### Can you even Component bro?
 
-```
+```js
 function HelloWorld({
   text
 }) {
@@ -63,20 +58,16 @@ function HelloWorld({
 ReactDOM.render(<HelloWorld text="hello world" />, document.body);
 ```
 
-* This is a pure function
-* Sometimes they're just functions
-* Always start with capital
 * Might be all you need
+* Simple
 
-???
-
-Sometimes all you need is to take props and return elements  
+^ Sometimes all you need is to take props and return elements  
 
 ---
 
 ### JSX to JS
 
-```
+```js
 function HelloWorld(_ref) {
   var text = _ref.text;
 
@@ -95,7 +86,7 @@ function HelloWorld(_ref) {
 
 # React Components as Classes
 
-```
+```js
 class HelloWorld extends React.Component {
   render() {
     const { text } = this.props;
@@ -111,7 +102,6 @@ class HelloWorld extends React.Component {
 * Sometimes we need some state
 
 ---
-class: center, middle
 
 # constructor
 
@@ -134,8 +124,7 @@ constructor(prop) {
 
 ### State
 
-> What's going on around here right now?
-
+* What's going on around here right now?
 * Has a user clicked or typed anything?
 * Any data needing to be fetched?
 * Any stored information?
@@ -186,12 +175,21 @@ update(e) {
 * After `setState`, `render` will fire
 * Do NOT update state w/ `this.state.text = "foo";`
 
-???
-
-First lifecycle hook is constructor
+^ First lifecycle hook is constructor
 
 ---
-class: center, middle
+
+# componentWillMount
+
+---
+
+### componentWillMount
+
+* `props` and `state` both ready
+* Can use for calling `setState`
+* Most times just use `constructor`
+
+---
 
 # componentDidMount
 
@@ -205,7 +203,7 @@ import ace from "aceeditor";
 export default class Editor extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = { /* init state */ };
   }
   componentDidMount() {
     this.editor = ace.edit(this.$text);
@@ -219,20 +217,49 @@ export default class Editor extends React.Component {
   }
 }
 ```
+
+---
+### componentDidMount
 
 * jQuery plugin time :trollface:
 * DOM is ready here
 * Stand up plugins
 * `ref` is now a function
+
 ---
 
 ### componentDidMount
 
-```js
+```js, [.highlight: 4]
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
-* constructor() {
+  constructor() {
+    super();
+    this.state = {};
+  }
+  componentDidMount() {
+    this.editor = ace.edit(this.$text);
+  }
+  render() {
+    return (
+      <div
+        ref={(node) => this.$text = node}
+      />
+    )
+  }
+}
+```
+
+---
+
+### componentDidMount
+
+```js, [.highlight: 11]
+import ace from "aceeditor";
+
+export default class Editor extends React.Component {
+  constructor() {
     super();
     this.state = {};
   }
@@ -252,7 +279,7 @@ export default class Editor extends React.Component {
 
 ### componentDidMount
 
-```js
+```js, [.highlight: 8]
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
@@ -261,30 +288,6 @@ export default class Editor extends React.Component {
     this.state = {};
   }
   componentDidMount() {
-    this.editor = ace.edit(this.$text);
-  }
-* render() {
-    return (
-      <div
-        ref={(node) => this.$text = node}
-      />
-    )
-  }
-}
-```
----
-
-### componentDidMount
-
-```js
-import ace from "aceeditor";
-
-export default class Editor extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
-  }
-* componentDidMount() {
     this.editor = ace.edit(this.$text);
   }
   render() {
@@ -298,7 +301,6 @@ export default class Editor extends React.Component {
 ```
 
 ---
-class: center, middle
 
 # componentWillUnmount
 
@@ -349,9 +351,9 @@ class Chat extends Component {
 
 ### componentWillUnmount
 
-```js
+```js, [.highlight: 2]
 class Chat extends Component {
-* constructor(props) {
+  constructor(props) {
     super(props);
     this.state = { messages: [] };
   }
@@ -380,44 +382,13 @@ class Chat extends Component {
 
 ### componentWillUnmount
 
-```js
+```js, [.highlight: 19]
 class Chat extends Component {
   constructor(props) {
     super(props);
     this.state = { messages: [] };
   }
   componentDidMount() {
-    this.subscription = postal.subscribe({
-      topic: "message.added",
-      callback: (message) => {
-        this.setState({
-          messages: [...this.state.messages, message]
-        })
-      }
-    });
-  }
-  componentWillUmount() {
-    this.subscription.unsubscribe();
-  }
-* render() {
-    return (
-      <Messages messages={this.state.message} />
-    )
-  }
-}
-```
-
----
-
-### componentWillUnmount
-
-```js
-class Chat extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { messages: [] };
-  }
-* componentDidMount() {
     this.subscription = postal.subscribe({
       topic: "message.added",
       callback: (message) => {
@@ -442,7 +413,7 @@ class Chat extends Component {
 
 ### componentWillUnmount
 
-```js
+```js, [.highlight: 6]
 class Chat extends Component {
   constructor(props) {
     super(props);
@@ -458,7 +429,7 @@ class Chat extends Component {
       }
     });
   }
-* componentWillUmount() {
+  componentWillUmount() {
     this.subscription.unsubscribe();
   }
   render() {
@@ -470,15 +441,44 @@ class Chat extends Component {
 ```
 
 ---
-class: center, middle
+
+### componentWillUnmount
+
+```js, [.highlight: 16]
+class Chat extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { messages: [] };
+  }
+  componentDidMount() {
+    this.subscription = postal.subscribe({
+      topic: "message.added",
+      callback: (message) => {
+        this.setState({
+          messages: [...this.state.messages, message]
+        })
+      }
+    });
+  }
+  componentWillUmount() {
+    this.subscription.unsubscribe();
+  }
+  render() {
+    return (
+      <Messages messages={this.state.message} />
+    )
+  }
+}
+```
+
+---
 
 # IRL
 
 ---
-class: center, middle
 ### IRL
 
-<img src="images/listtopoi.gif" style="width: 100%;" />
+![inline](images/listtopoi.gif)
 
 ---
 
@@ -498,10 +498,8 @@ export default class PoiDetail {
 }
 ```
 
-* `List` is mounted on load
-* Then, `Poi` gets mounted on route change
+* `List` is mounted on load, `Poi` gets mounted on route change
 * Use `react-router` params to get ID
-* Use `componentDidMount` to fire actions
 
 ---
 
@@ -525,7 +523,6 @@ export { connected };
 * Setup the state, and props
 
 ---
-class: center, middle
 
 # componentWillReceiveProps
 
@@ -533,7 +530,7 @@ class: center, middle
 
 ### I before E...
 
-<img src="images/willrecieve.png" style="width: 100%" />
+![inline](images/willrecieve.png)
 
 ---
 
@@ -542,7 +539,7 @@ class: center, middle
 * Called when the props passed in change
 * NOT called on initial render
 * `props` have changed
-* Be careful, can cause loops
+* Be careful, can cause loops i.e. don't compare objects
 * Update state if props don't match
 * Very useful in React Router SPA
 
@@ -571,6 +568,7 @@ class AvatarUploader extends Component {
 ```
 
 * Useful when `state` is set with a `prop`.
+* [Anti-pattern alert](https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e)!
 
 ---
 
@@ -591,6 +589,8 @@ class Editor extends PureComponent {
     )
   }
 }
+```
+```js
 const mapStateToProps = (state) => ({ image: state.image })
 export default connect(mapStateToProps)(Editor);
 ```
@@ -614,7 +614,7 @@ class SightComponent extends Component {
 }
 ```
 
-* http://www.lonelyplanet.com/usa/nashville/attractions/country-music-hall-of-fame-museum/a/poi-sig/381139/362228
+* [Country Music Hall of Fame](http://www.lonelyplanet.com/usa/nashville/attractions/country-music-hall-of-fame-museum/a/poi-sig/381139/362228)
 * If a component is mounted already
 
 ---
@@ -624,7 +624,7 @@ class SightComponent extends Component {
 ```js
 componentWillReceiveProps(nextProps) {
   const { id: currentId } = this.props.params;
-  const { id: nextId } = this.props.params;
+  const { id: nextId } = nextProps.params;
 
   if (currentId !== nextId) {
     this.props.fetchPoi(nextId);
@@ -636,7 +636,6 @@ componentWillReceiveProps(nextProps) {
 * Name variables for readability
 
 ---
-class: center, middle
 
 # componentDidUpdate
 
@@ -658,7 +657,6 @@ componentDidUpdate(prevProps) {
 * Update the DOM
 
 ---
-class: center, middle
 
 # shouldComponentUpdate
 
@@ -694,9 +692,24 @@ shouldComponentUpdate(nextProps) {
 
 * If you need fine grain control
 * Parent could change a prop
+* Return false will cancel...
+* `componentWillUpdate`, `render`, and `componentDidUpdate`
 
 ---
-class: center, middle
+
+# componentWillUpdate
+
+---
+
+### componentWillUpdate
+
+* Called every re-render like when `setState` called
+* Do NOT call `setState` here
+* Useful for triggering CSS animations or transitions
+
+---
+
+---
 
 # Full Example
 
@@ -719,6 +732,7 @@ export default class PoiDetail {
   shouldComponentUpdate(nextProps) {
     return nextProps.poi.id !== this.props.poi.id;
   }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
   componentDidUpdate(prevProps) {
     const isNewPoi = prevProps.poi.id !== this.props.poi.id;
     if (isNewPoi) {
@@ -733,71 +747,7 @@ export default class PoiDetail {
 ```
 ---
 
-```js
-export default class PoiDetail {
-* constructor(props) {
-    // ...
-  }
-  hasPoiUpdated() {}
-  componentDidMount() {
-    this.subscription = postal.subscribe({ /* ... */ })
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.props.fetchPoi(nextProps.params.id);
-    }
-  }
-  shouldComponentUpdate(nextProps) {
-    return nextProps.poi.id !== this.props.poi.id;
-  }
-  componentDidUpdate(prevProps) {
-    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
-    if (isNewPoi) {
-      window.scrollTop = 0;
-    }
-  }
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() { /* ... */ }
-}
-```
-
----
-
-```js
-export default class PoiDetail {
-  constructor(props) {
-    // ...
-  }
-  hasPoiUpdated() {}
-* componentDidMount() {
-    this.subscription = postal.subscribe({ /* ... */ })
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.props.fetchPoi(nextProps.params.id);
-    }
-  }
-  shouldComponentUpdate(nextProps) {
-    return nextProps.poi.id !== this.props.poi.id;
-  }
-  componentDidUpdate(prevProps) {
-    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
-    if (isNewPoi) {
-      window.scrollTop = 0;
-    }
-  }
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() { /* ... */ }
-}
-```
-
----
-
-```js
+```js, [.highlight: 2]
 export default class PoiDetail {
   constructor(props) {
     // ...
@@ -814,6 +764,7 @@ export default class PoiDetail {
   shouldComponentUpdate(nextProps) {
     return nextProps.poi.id !== this.props.poi.id;
   }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
   componentDidUpdate(prevProps) {
     const isNewPoi = prevProps.poi.id !== this.props.poi.id;
     if (isNewPoi) {
@@ -823,7 +774,73 @@ export default class PoiDetail {
   componentWillUnmount() {
     this.subscription.unsubscribe();
   }
-* render() { /* ... */ }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js, [.highlight: 6-8]
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js, [.highlight: 27]
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
 }
 ```
 
@@ -843,71 +860,7 @@ render() {
 
 ---
 
-```js
-export default class PoiDetail {
-  constructor(props) {
-    // ...
-  }
-  hasPoiUpdated() {}
-  componentDidMount() {
-    this.subscription = postal.subscribe({ /* ... */ })
-  }
-* componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.props.fetchPoi(nextProps.params.id);
-    }
-  }
-  shouldComponentUpdate(nextProps) {
-    return nextProps.poi.id !== this.props.poi.id;
-  }
-  componentDidUpdate(prevProps) {
-    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
-    if (isNewPoi) {
-      window.scrollTop = 0;
-    }
-  }
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() { /* ... */ }
-}
-```
-
----
-
-```js
-export default class PoiDetail {
-  constructor(props) {
-    // ...
-  }
-  hasPoiUpdated() {}
-  componentDidMount() {
-    this.subscription = postal.subscribe({ /* ... */ })
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.props.fetchPoi(nextProps.params.id);
-    }
-  }
-* shouldComponentUpdate(nextProps) {
-    return nextProps.poi.id !== this.props.poi.id;
-  }
-  componentDidUpdate(prevProps) {
-    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
-    if (isNewPoi) {
-      window.scrollTop = 0;
-    }
-  }
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() { /* ... */ }
-}
-```
-
----
-
-```js
+```js, [.highlight: 9-13]
 export default class PoiDetail {
   constructor(props) {
     // ...
@@ -924,6 +877,7 @@ export default class PoiDetail {
   shouldComponentUpdate(nextProps) {
     return nextProps.poi.id !== this.props.poi.id;
   }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
   componentDidUpdate(prevProps) {
     const isNewPoi = prevProps.poi.id !== this.props.poi.id;
     if (isNewPoi) {
@@ -933,12 +887,44 @@ export default class PoiDetail {
   componentWillUnmount() {
     this.subscription.unsubscribe();
   }
-* render() { /* ... */ }
+  render() { /* ... */ }
 }
 ```
 
 ---
-class: center, middle
+
+```js, [.highlight: 14-16]
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
 
 ### Fetching...
 
@@ -946,71 +932,7 @@ class: center, middle
 
 ---
 
-```js
-export default class PoiDetail {
-  constructor(props) {
-    // ...
-  }
-  hasPoiUpdated() {}
-  componentDidMount() {
-    this.subscription = postal.subscribe({ /* ... */ })
-  }
-* componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.props.fetchPoi(nextProps.params.id);
-    }
-  }
-  shouldComponentUpdate(nextProps) {
-    return nextProps.poi.id !== this.props.poi.id;
-  }
-  componentDidUpdate(prevProps) {
-    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
-    if (isNewPoi) {
-      window.scrollTop = 0;
-    }
-  }
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() { /* ... */ }
-}
-```
-
----
-
-```js
-export default class PoiDetail {
-  constructor(props) {
-    // ...
-  }
-  hasPoiUpdated() {}
-  componentDidMount() {
-    this.subscription = postal.subscribe({ /* ... */ })
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.props.fetchPoi(nextProps.params.id);
-    }
-  }
-* shouldComponentUpdate(nextProps) {
-    return nextProps.poi.id !== this.props.poi.id;
-  }
-  componentDidUpdate(prevProps) {
-    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
-    if (isNewPoi) {
-      window.scrollTop = 0;
-    }
-  }
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() { /* ... */ }
-}
-```
-
----
-
-```js
+```js, [.highlight: 9-13]
 export default class PoiDetail {
   constructor(props) {
     // ...
@@ -1027,6 +949,7 @@ export default class PoiDetail {
   shouldComponentUpdate(nextProps) {
     return nextProps.poi.id !== this.props.poi.id;
   }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
   componentDidUpdate(prevProps) {
     const isNewPoi = prevProps.poi.id !== this.props.poi.id;
     if (isNewPoi) {
@@ -1036,13 +959,13 @@ export default class PoiDetail {
   componentWillUnmount() {
     this.subscription.unsubscribe();
   }
-* render() { /* ... */ }
+  render() { /* ... */ }
 }
 ```
 
 ---
 
-```js
+```js, [.highlight: 14-16]
 export default class PoiDetail {
   constructor(props) {
     // ...
@@ -1059,7 +982,8 @@ export default class PoiDetail {
   shouldComponentUpdate(nextProps) {
     return nextProps.poi.id !== this.props.poi.id;
   }
-* componentDidUpdate(prevProps) {
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
+  componentDidUpdate(prevProps) {
     const isNewPoi = prevProps.poi.id !== this.props.poi.id;
     if (isNewPoi) {
       window.scrollTop = 0;
@@ -1074,7 +998,7 @@ export default class PoiDetail {
 
 ---
 
-```js
+```js, [.highlight: 17]
 export default class PoiDetail {
   constructor(props) {
     // ...
@@ -1091,13 +1015,14 @@ export default class PoiDetail {
   shouldComponentUpdate(nextProps) {
     return nextProps.poi.id !== this.props.poi.id;
   }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
   componentDidUpdate(prevProps) {
     const isNewPoi = prevProps.poi.id !== this.props.poi.id;
     if (isNewPoi) {
       window.scrollTop = 0;
     }
   }
-* componentWillUnmount() {
+  componentWillUnmount() {
     this.subscription.unsubscribe();
   }
   render() { /* ... */ }
@@ -1106,7 +1031,133 @@ export default class PoiDetail {
 
 ---
 
-class: center, middle
+```js, [.highlight: 27]
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js, [.highlight: 17]
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+```js, [.highlight: 18-23]
+export default class PoiDetail {
+  constructor(props) {
+    // ...
+  }
+  hasPoiUpdated() {}
+  componentDidMount() {
+    this.subscription = postal.subscribe({ /* ... */ })
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.id !== this.props.params.id) {
+      this.props.fetchPoi(nextProps.params.id);
+    }
+  }
+  shouldComponentUpdate(nextProps) {
+    return nextProps.poi.id !== this.props.poi.id;
+  }
+  componentWillUpdate(nextProps, nextState) { /* ... */ }
+  componentDidUpdate(prevProps) {
+    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
+    if (isNewPoi) {
+      window.scrollTop = 0;
+    }
+  }
+  componentWillUnmount() {
+    this.subscription.unsubscribe();
+  }
+  render() { /* ... */ }
+}
+```
+
+---
+
+# tldr;
+
+---
+
+| Name of thing             | Sorta like...    | Mounted? | Can you even setState? | What would you say... ya do here?                                     | 
+|---------------------------|------------------|----------|------------------------|-----------------------------------------------------------------------| 
+| constructor               | initialize()     | nope     | nope                   | init stuff NO side effects                                            | 
+| componentWillMount        | beforeDomReady() | nope     | yeah but don't         | Only needed in createClass now use constructor for most things        | 
+| render                    | render           | nope     | please no              | render stuff and don't set any state please                           | 
+| componentDidMount         | domReady()       | yup      | yup                    | DOM is a go init jQuery plugins dispatch stuff                        | 
+| componentWillReceiveProps | onChange()       | yup      | yup                    | Props changed feel free to update state if needed                     | 
+| componentWillUpdate       | beforeRender()   | yup      | nope                   | The props or state changed need to do anything else before rendering? | 
+| shouldComponentUpdate     | shouldRender()   | yup      | nope                   | So yeah something changed but do we REALLY need to update?            | 
+| componentDidUpdate        | afterRender()    | yup      | yup                    | Great success we've rendered a thing... anything else?                | 
+| componentWillUnmount      | destroy()        | too late | too late               | Only you can prevent memory leaks aka unbind things                   | 
+
+---
+
+![inline](images/lifecycle.png)
+
+---
+
+![inline](images/lifecyclegraph.png)
+
+* [https://tylermcginnis.com/an-introduction-to-life-cycle-events-in-react-js/](https://tylermcginnis.com/an-introduction-to-life-cycle-events-in-react-js/)
+
+---
+
 
 # Testing
 
@@ -1122,16 +1173,17 @@ npm i install -S jest enzyme
 * Enzyme for sweet
 * Super important to test
 * Always test logic
-* Use [mount](https://github.com/airbnb/enzyme/blob/master/docs/api/mount.md) to run `JSDom`
+* Use [mount](https://github.com/airbnb/enzyme/blob/master/docs/api/mount.md) to run JSDom
 
 ---
 
 ### Testing willMount
+
 ```js
 describe("Detail Page", () => {
   it("should fetch a page if there isn't one loaded", () => {
+    const fetch = jest.fn();
     const wrapper = mount(
-      const fetch = jest.fn();
       <Details
         poi={null}
         fetchPoi={fetch}
@@ -1143,8 +1195,9 @@ describe("Detail Page", () => {
 });
 ```
 
-* Create a mock fetch
-* Assert with `toHaveBeenCalled` 
+^ Create a mock fetch
+^ Assert with `toHaveBeenCalled` 
+
 ---
 
 ### Testing willReceiveProps
@@ -1152,9 +1205,10 @@ describe("Detail Page", () => {
 ```js
 describe("Detail Page", () => {
   it("should fetch a new page", () => {
+    const fetch = jest.fn();
     const wrapper = mount(
-      const fetch = jest.fn();
       <Details
+        poi={{ id: 1}}
         params={{
           id: 1
         }}
@@ -1176,14 +1230,16 @@ describe("Detail Page", () => {
 
 ### Additional Resources
 
-* https://gist.github.com/jcreamer898/aeaf4b7a08b9871c3a48ad4bb7ccb35c
-* https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1
+* [https://gist.github.com/jcreamer898/aeaf4b7a08b9871c3a48ad4bb7ccb35c](https://gist.github.com/jcreamer898/aeaf4b7a08b9871c3a48ad4bb7ccb35c)
+* [https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1](https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1)
+* [https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/lifecycle_methods_overview.html](https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/lifecycle_methods_overview.html)
+* [http://busypeoples.github.io/post/react-component-lifecycle/](http://busypeoples.github.io/post/react-component-lifecycle/)
 
 ---
 
 # Thanks!
 
-<img style="width:50%" src="images/clap.gif" />
+![inline](images/clap.gif)
 
 ### [@jcreamer898](http://twitter.com/jcreamer898)
 ### [jonathancreamer.com](http://jonathancreamer.com)
