@@ -60,8 +60,10 @@ ReactDOM.render(<HelloWorld text="hello world" />, document.body);
 
 * Might be all you need
 * Simple
+* State forced to higher level container components
 
 ^ Sometimes all you need is to take props and return elements  
+^ You’re forced to put state management where it belongs: in higher level container components.
 
 ---
 
@@ -81,6 +83,8 @@ function HelloWorld(_ref) {
 
 * JSX is an abstraction over creating element trees
 * Different renderers like ReactDOM
+* lowercase names refer to built-in components
+* Capitalized names refer to custom components
 
 ---
 
@@ -107,18 +111,19 @@ class HelloWorld extends React.Component {
 
 ---
 
-### constructor
+### constructor aka init
 
 ```js
-constructor(prop) {
+constructor(props) {
   super(props);
-  this.state = {}:
+  this.state = {};
 }
 ```
 
 * Perform any initial setup
 * Called once per mounted component
 * Initialize state
+* Must call `super(props)`
 
 ---
 
@@ -141,6 +146,7 @@ class WYSIWYG extends React.Component {
     return (
       <textarea
         onChange={this.update}
+        value={text}
       />
     );
   }
@@ -166,7 +172,7 @@ constructor(props) {
   this.update = this.update.bind(this);
 }
 update(e) {
-  const { text } = e.target.value;
+  const text = e.target.value;
   this.setState({ text });
 }
 ```
@@ -179,7 +185,25 @@ update(e) {
 
 ---
 
+### async setState
+
+```js
+// WRONG
+this.setState({ count: this.state.count + 1 });
+doSomething(this.state.count);
+
+// RIGHT
+this.setState((prevState, props) => ({
+  counter: prevState.count + 1
+}));
+```
+
+* Don't rely on current state
+
+---
+
 # componentWillMount
+### aka beforeDomReady
 
 ---
 
@@ -192,6 +216,16 @@ update(e) {
 ---
 
 # componentDidMount
+### aka onDomReady
+
+---
+### componentDidMount
+
+* jQuery plugin time :trollface:
+* DOM is ready here
+* Stand up plugins
+* `ref` is now a function
+* Dispatch actions
 
 ---
 
@@ -219,18 +253,10 @@ export default class Editor extends React.Component {
 ```
 
 ---
-### componentDidMount
-
-* jQuery plugin time :trollface:
-* DOM is ready here
-* Stand up plugins
-* `ref` is now a function
-
----
 
 ### componentDidMount
 
-```js, [.highlight: 4]
+```js, [.highlight: 4-7]
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
@@ -255,7 +281,7 @@ export default class Editor extends React.Component {
 
 ### componentDidMount
 
-```js, [.highlight: 11]
+```js, [.highlight: 11-17]
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
@@ -279,7 +305,7 @@ export default class Editor extends React.Component {
 
 ### componentDidMount
 
-```js, [.highlight: 8]
+```js, [.highlight: 8-10]
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
@@ -303,6 +329,7 @@ export default class Editor extends React.Component {
 ---
 
 # componentWillUnmount
+### aka destroy
 
 ---
 
@@ -480,6 +507,8 @@ class Chat extends Component {
 
 ![inline](images/listtopoi.gif)
 
+* [](https://)
+
 ---
 
 ### componentDidMount IRL
@@ -487,11 +516,11 @@ class Chat extends Component {
 ```js
 export default class PoiDetail {
   componentDidMount() {
-    if (!this.state.poi) {
+    if (!this.props.poi) {
       this.fetchPoi(this.props.params.id);
     }
 
-    if (!this.state.related) {
+    if (!this.props.related) {
       this.fetchRelated(this.props.params.id);
     }
   }
@@ -525,6 +554,7 @@ export { connected };
 ---
 
 # componentWillReceiveProps
+### aka onChange
 
 ---
 
@@ -536,9 +566,10 @@ export { connected };
 
 ### componentWillReceiveProps
 
-* Called when the props passed in change
-* NOT called on initial render
 * `props` have changed
+* NOT called on initial render
+* Update `state` based on `props`
+* Dispatch actions
 * Be careful, can cause loops i.e. don't compare objects
 * Update state if props don't match
 * Very useful in React Router SPA
@@ -637,28 +668,31 @@ componentWillReceiveProps(nextProps) {
 
 ---
 
-# componentDidUpdate
-
----
-
-### componentDidUpdate
+### lOOps
 
 ```js
-componentDidUpdate(prevProps) {
-  if (prevProps.params.id !== this.params.id) {
-    window.scrollTop = 0;
-    this.props.pageView();
+componentWillReceiveProps(nextProps) {
+  const { id: currentId } = this.props.params;
+  const { id: nextId } = nextProps.poi;
+
+  if (currentId !== nextId) {
+    this.props.fetchPoi(nextId);
   }
 }
 ```
 
-* Gives you previous props `prevProps` to compare
-* Called AFTER render
-* Update the DOM
+* Next `poi.id` won't match
+
+---
+
+### loops
+
+![inline](images/loop.gif)
 
 ---
 
 # shouldComponentUpdate
+### aka shouldRender
 
 ---
 
@@ -698,16 +732,40 @@ shouldComponentUpdate(nextProps) {
 ---
 
 # componentWillUpdate
+### aka beforeRender
 
 ---
 
 ### componentWillUpdate
 
-* Called every re-render like when `setState` called
+
+* Called BEFORE render like when `setState` called
 * Do NOT call `setState` here
 * Useful for triggering CSS animations or transitions
 
 ---
+
+---
+
+# componentDidUpdate
+### aka afterRender
+
+---
+
+### componentDidUpdate
+
+```js
+componentDidUpdate(prevProps) {
+  if (prevProps.poi.id !== this.poi.id) {
+    window.scrollTop = 0;
+    this.props.pageView();
+  }
+}
+```
+
+* Gives you previous props `prevProps` to compare before actions
+* Called AFTER render
+* Update the DOM
 
 ---
 
@@ -780,7 +838,7 @@ export default class PoiDetail {
 
 ---
 
-```js, [.highlight: 6-8]
+```js, [.highlight: 27]
 export default class PoiDetail {
   constructor(props) {
     // ...
@@ -811,9 +869,10 @@ export default class PoiDetail {
 }
 ```
 
+
 ---
 
-```js, [.highlight: 27]
+```js, [.highlight: 6-8]
 export default class PoiDetail {
   constructor(props) {
     // ...
@@ -1032,39 +1091,6 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 27]
-export default class PoiDetail {
-  constructor(props) {
-    // ...
-  }
-  hasPoiUpdated() {}
-  componentDidMount() {
-    this.subscription = postal.subscribe({ /* ... */ })
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.props.fetchPoi(nextProps.params.id);
-    }
-  }
-  shouldComponentUpdate(nextProps) {
-    return nextProps.poi.id !== this.props.poi.id;
-  }
-  componentWillUpdate(nextProps, nextState) { /* ... */ }
-  componentDidUpdate(prevProps) {
-    const isNewPoi = prevProps.poi.id !== this.props.poi.id;
-    if (isNewPoi) {
-      window.scrollTop = 0;
-    }
-  }
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() { /* ... */ }
-}
-```
-
----
-
-```js, [.highlight: 17]
 export default class PoiDetail {
   constructor(props) {
     // ...
