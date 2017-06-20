@@ -507,7 +507,7 @@ class Chat extends Component {
 
 ![inline](images/listtopoi.gif)
 
-* [](https://)
+* [San Francisco Restaurants](https://www.lonelyplanet.com/usa/san-francisco/restaurants/a/poi-eat/361858)
 
 ---
 
@@ -529,27 +529,6 @@ export default class PoiDetail {
 
 * `List` is mounted on load, `Poi` gets mounted on route change
 * Use `react-router` params to get ID
-
----
-
-### componentDidMount IRL
-
-```js
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-
-const mapStateToProps = state => ({
-  poi: state.poi,
-  related: state.related
-});
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators(actions, dispatch)
-});
-const connected = connect(mapStateToProps, mapDispatchToProps)(Poi);
-export { connected };
-```
-
-* Setup the state, and props
 
 ---
 
