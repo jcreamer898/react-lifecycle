@@ -1,3 +1,6 @@
+footer: @jcreamer898 http://bit.ly/react-lifecycle
+slidenumbers: true
+
 # Deep Dive on the React Lifecycle
 
 ---
@@ -102,8 +105,39 @@ class HelloWorld extends React.Component {
 ```
 
 * If all you have is `render`, stay functional
+* An abstract base class meant to be extended
 * Don't screw with props, they're Read Only
 * Sometimes we need some state
+
+---
+
+# Lifecycle Methods
+### Mounting, Updating, Unmounting
+
+---
+
+### Mounting
+* constructor()
+* componentWillMount()
+* render()
+* componentDidMount()
+
+---
+
+### Updating
+
+
+* componentWillReceiveProps()
+* shouldComponentUpdate()
+* componentWillUpdate()
+* render()
+* componentDidUpdate()
+
+---
+
+### Unmounting
+
+* componentWillUnmount()
 
 ---
 
@@ -189,16 +223,16 @@ update(e) {
 
 ```js
 // WRONG
-this.setState({ count: this.state.count + 1 });
+this.setState({ count: this.state.count + props.count });
 doSomething(this.state.count);
 
 // RIGHT
 this.setState((prevState, props) => ({
-  counter: prevState.count + 1
+  counter: prevState.count + props.count
 }));
 ```
 
-* Don't rely on current state
+* Don't rely on current state when computing
 
 ---
 
@@ -235,8 +269,8 @@ this.setState((prevState, props) => ({
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = { /* init state */ };
   }
   componentDidMount() {
@@ -514,7 +548,7 @@ class Chat extends Component {
 ### componentDidMount IRL
 
 ```js
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   componentDidMount() {
     if (!this.props.poi) {
       this.fetchPoi(this.props.params.id);
@@ -586,6 +620,7 @@ class AvatarUploader extends Component {
 
 ```js
 class Editor extends PureComponent {
+  constructor(props) { /*... */ }
   upload(files) {
     this.props.dispatch(uploadAction(files));
   }
@@ -657,10 +692,14 @@ componentWillReceiveProps(nextProps) {
   if (currentId !== nextId) {
     this.props.fetchPoi(nextId);
   }
+  if (this.props.poi !== nextProps.poi) {
+    // W/ redux, this is probably always true!
+  }
 }
 ```
 
 * Next `poi.id` won't match
+* Be careful comparing objects too! They change a lot.
 
 ---
 
@@ -678,8 +717,8 @@ componentWillReceiveProps(nextProps) {
 ### shouldComponentUpdate
 
 ```js
-shouldComponentUpdate(nextProps, nextState) {
-  return shallowCompare(nextProps, nextState);
+shouldComponentUpdate(this, nextProps, nextState) {
+  return shallowCompare(this, nextProps, nextState);
 }
 ```
 ```js
@@ -724,8 +763,6 @@ shouldComponentUpdate(nextProps) {
 
 ---
 
----
-
 # componentDidUpdate
 ### aka afterRender
 
@@ -753,7 +790,7 @@ componentDidUpdate(prevProps) {
 ---
 
 ```js
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -785,7 +822,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 2]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -818,7 +855,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 27]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -852,7 +889,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 6-8]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -899,7 +936,7 @@ render() {
 ---
 
 ```js, [.highlight: 9-13]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -932,7 +969,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 14-16]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -971,7 +1008,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 9-13]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -1004,7 +1041,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 14-16]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -1037,7 +1074,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 17]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -1070,7 +1107,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 27]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
@@ -1103,7 +1140,7 @@ export default class PoiDetail {
 ---
 
 ```js, [.highlight: 18-23]
-export default class PoiDetail {
+export default class PoiDetail extends React.PureComponent {
   constructor(props) {
     // ...
   }
