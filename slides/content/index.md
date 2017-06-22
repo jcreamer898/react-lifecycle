@@ -294,9 +294,9 @@ export default class Editor extends React.Component {
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
+  constructor(props) {
+    super(props);
+    this.state = { /* init state */ };
   }
   componentDidMount() {
     this.editor = ace.edit(this.$text);
@@ -319,9 +319,9 @@ export default class Editor extends React.Component {
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
+  constructor(props) {
+    super(props);
+    this.state = { /* init state */ };
   }
   componentDidMount() {
     this.editor = ace.edit(this.$text);
@@ -343,9 +343,9 @@ export default class Editor extends React.Component {
 import ace from "aceeditor";
 
 export default class Editor extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
+  constructor(props) {
+    super(props);
+    this.state = { /* init state */ };
   }
   componentDidMount() {
     this.editor = ace.edit(this.$text);
@@ -611,7 +611,12 @@ class AvatarUploader extends Component {
 }
 ```
 
+---
+
+### componentWillReceiveProps
+
 * Useful when `state` is set with a `prop`.
+* Just be careful...
 * [Anti-pattern alert](https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e)!
 
 ---
@@ -640,8 +645,8 @@ const mapStateToProps = (state) => ({ image: state.image })
 export default connect(mapStateToProps)(Editor);
 ```
 
-* `image` gets passed in to `AvatarUploader`
-* Causes `componentWillReceiveProps` to fire
+^ `image` gets passed in to `AvatarUploader`
+^ Causes `componentWillReceiveProps` to fire
 
 ---
 
